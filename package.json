@@ -1,10 +1,10 @@
 {
-    "name": "nbsp-vscode",
-    "displayName": "nbsp-vscode",
-    "description": "Visualizes suspicious unicode characters and trailing whitespaces",
+    "name": "non-breaking-space-highlighter",
+    "displayName": "Non-breaking space highlighter",
+    "description": "Visualizes non-breaking space and other odd characters",
     "version": "0.0.1",
-    "publisher": "possan",
-    "repository": "https://github.com/possan/nbsp-vscode",
+    "publisher": "viktorzetterstrom",
+    "repository": "https://github.com/viktorzetterstrom/non-breaking-space-highlighter",
     "engines": {
         "vscode": "^1.10.0"
     },

@@ -1,11 +1,11 @@
-// Highlight non breakable spaces and other similar non-ascii characters, also highlights trailing whitespace
-// Based on my sublime extension: https://github.com/possan/sublime_unicode_nbsp/blob/master/sublime_unicode_nbsp.py
+// Highlight non breakable spaces and other similar non-ascii characters
+// Originally created by Possan (https://github.com/possan/nbsp-vscode)
 
-var vscode = require('vscode')
+let vscode = require('vscode');
 
-const MAX_DOCUMENT_SIZE = 1048576
+const MAX_DOCUMENT_SIZE = 1048576;
 
-var INVALID_INLINE_CHARS = [
+let INVALID_INLINE_CHARS = [
   '\\x82', // High code comma
   '\\x84', // High code double comma
   '\\x85', // Tripple dot
@@ -28,30 +28,19 @@ var INVALID_INLINE_CHARS = [
   '\\xbf', // c-single quote
   '\\xa8', // modifier - under curve
   '\\xb1'  // modifier - under line
-]
-
-var INVALID_TRAILING_CHARS = [
-  '\\x95',
-  '\\x99',
-  '\\xa0',
-  '\\xa8', // modifier - under curve
-  '\\xb1', // modifier - under line
-  '\\t',
-  '\\r',
-  ' '
-]
+];
 
 exports.activate = function(context) {
   const whitespaceDecorationType = vscode.window.createTextEditorDecorationType({
     backgroundColor: 'rgba(255,80,0,0.75)'
-  })
+  });
 
   vscode.window.onDidChangeActiveTextEditor(editor => {
-    activeEditor = editor
+    activeEditor = editor;
     if (editor) {
-      triggerUpdateDecorations()
+      triggerUpdateDecorations();
     }
-  }, null, context.subscriptions)
+  }, null, context.subscriptions);
 
   vscode.workspace.onDidChangeTextDocument(event => {
     if (activeEditor && event.document === activeEditor.document) {
@@ -59,7 +48,7 @@ exports.activate = function(context) {
     }
   }, null, context.subscriptions);
 
-  var timeout = null;
+  let timeout = null;
 
   function triggerUpdateDecorations() {
     if (timeout) {
@@ -68,8 +57,7 @@ exports.activate = function(context) {
     timeout = setTimeout(updateDecorations, 500);
   }
 
-  const re1 = new RegExp('[' + INVALID_INLINE_CHARS.join('') + ']+', 'g')
-  const re2 = new RegExp('[' + INVALID_TRAILING_CHARS.join('') + ']+$', 'img')
+  const re1 = new RegExp('[' + INVALID_INLINE_CHARS.join('') + ']+', 'g');
 
   function updateDecorations() {
     if (!activeEditor) {
@@ -80,32 +68,25 @@ exports.activate = function(context) {
         return;
     }
 
-    const text = activeEditor.document.getText()
-    const decorations = []
-    let match
+    const text = activeEditor.document.getText();
+    const decorations = [];
+    let match;
 
     while (match = re1.exec(text)) {
-      const startPos = activeEditor.document.positionAt(match.index)
-      const endPos = activeEditor.document.positionAt(match.index + match[0].length)
-      const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Suspicious inline whitespace' }
-      decorations.push(decoration)
+      const startPos = activeEditor.document.positionAt(match.index);
+      const endPos = activeEditor.document.positionAt(match.index + match[0].length);
+      const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Suspicious inline whitespace' };
+      decorations.push(decoration);
     }
 
-    while (match = re2.exec(text)) {
-      const startPos = activeEditor.document.positionAt(match.index)
-      const endPos = activeEditor.document.positionAt(match.index + match[0].length)
-      const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Suspicious trailing whitespace' }
-      decorations.push(decoration)
-    }
-
-    activeEditor.setDecorations(whitespaceDecorationType, decorations)
+    activeEditor.setDecorations(whitespaceDecorationType, decorations);
   }
 
-  let activeEditor = vscode.window.activeTextEditor
+  let activeEditor = vscode.window.activeTextEditor;
   if (activeEditor) {
-    triggerUpdateDecorations()
+    triggerUpdateDecorations();
   }
-}
+};
 
 
 exports.deactivate = function() {};
