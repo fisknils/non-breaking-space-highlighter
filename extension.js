@@ -5,7 +5,7 @@ let vscode = require('vscode');
 
 const MAX_DOCUMENT_SIZE = 1048576;
 
-let INVALID_INLINE_CHARS = [
+const INVALID_INLINE_CHARS = [
   '\\x82', // High code comma
   '\\x84', // High code double comma
   '\\x85', // Tripple dot
@@ -57,7 +57,7 @@ exports.activate = function(context) {
     timeout = setTimeout(updateDecorations, 500);
   }
 
-  const re1 = new RegExp('[' + INVALID_INLINE_CHARS.join('') + ']+', 'g');
+  const invalidCharsRegexp = new RegExp('[' + INVALID_INLINE_CHARS.join('') + ']+', 'g');
 
   function updateDecorations() {
     if (!activeEditor) {
@@ -72,7 +72,7 @@ exports.activate = function(context) {
     const decorations = [];
     let match;
 
-    while (match = re1.exec(text)) {
+    while (match = invalidCharsRegexp.exec(text)) {
       const startPos = activeEditor.document.positionAt(match.index);
       const endPos = activeEditor.document.positionAt(match.index + match[0].length);
       const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Suspicious inline whitespace' };
