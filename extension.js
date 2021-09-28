@@ -60,6 +60,8 @@ exports.activate = function(context) {
   const invalidCharsRegexp = new RegExp('[' + INVALID_INLINE_CHARS.join('') + ']+', 'g');
 
   function updateDecorations() {
+    let heartAttackMode = false;
+    
     if (!activeEditor) {
       return;
     }
@@ -77,9 +79,14 @@ exports.activate = function(context) {
       const endPos = activeEditor.document.positionAt(match.index + match[0].length);
       const decoration = { range: new vscode.Range(startPos, endPos), hoverMessage: 'Suspicious inline whitespace' };
       decorations.push(decoration);
+      heartAttackMode = true;
     }
 
     activeEditor.setDecorations(whitespaceDecorationType, decorations);
+    
+    if ( heartAttackMode ) {
+      new Audio( 'https://cdn2.spasm.se/assets/uh-oh.mp3' );
+    }
   }
 
   let activeEditor = vscode.window.activeTextEditor;
